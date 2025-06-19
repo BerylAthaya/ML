@@ -1,26 +1,21 @@
 import streamlit as st
 import tensorflow as tf
 import numpy as np
-import cv2
 from PIL import Image
 
-model = tf.keras.models.load_model('model.h5')
+model = tf.keras.models.load_model("model.h5")
+expression_map = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
 
-st.title("Deteksi Ekspresi Wajah")
+st.title("Deteksi Ekspresi Wajah 😊😡😭")
 
 uploaded_file = st.file_uploader("Upload gambar wajah", type=["jpg", "jpeg", "png"])
-
 if uploaded_file is not None:
-    image = Image.open(uploaded_file).convert('RGB')
-    st.image(image, caption="Gambar yang diunggah", use_column_width=True)
-
-    img = image.resize((48, 48))  # asumsi input model 48x48
-    img_array = np.array(img)
-    img_array = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
-    img_array = img_array.reshape(1, 48, 48, 1) / 255.0
+    image = Image.open(uploaded_file).convert("L").resize((48, 48))
+    img_array = np.array(image) / 255.0
+    img_array = np.expand_dims(img_array, axis=(0, -1))
 
     prediction = model.predict(img_array)
-    kelas = ['Marah', 'Jijik', 'Takut', 'Senang', 'Sedih', 'Kaget', 'Netral']
-    hasil = kelas[np.argmax(prediction)]
+    label = expression_map[np.argmax(prediction)]
 
-    st.subheader(f"Ekspresi terdeteksi: {hasil}")
+    st.image(image, caption="Wajah yang diunggah", width=200)
+    st.write(f"Ekspresi terdeteksi: **{label}**")
