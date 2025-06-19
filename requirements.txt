@@ -1,5 +1,4 @@
 streamlit==1.28.0
-opencv-python-headless==4.9.0.80
-numpy
-tensorflow==2.15.0
+tensorflow==2.12.0
 Pillow
+numpy
